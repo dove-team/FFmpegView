@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <UseWPF>true</UseWPF>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dove.Bass.Windows" Version="1.0.0" />
+    <PackageReference Include="Dove.FFmpeg.Windows" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FFmpegView.Bass\FFmpegView.Bass.csproj" />
+    <ProjectReference Include="..\..\src\FFmpegView.NAudio\FFmpegView.NAudio.csproj" />
+    <ProjectReference Include="..\..\src\FFmpegView.Wpf\FFmpegView.Wpf.csproj" />
+  </ItemGroup>
+</Project>

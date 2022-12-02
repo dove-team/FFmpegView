@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	<Version>1.0.0</Version>
+	<Platforms>AnyCPU</Platforms>
+	<Authors>michael_eddy</Authors>
+	<LangVersion>latest</LangVersion>
+	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+	<PackageProjectUrl>https://github.com/dove-team/FFmpegView</PackageProjectUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="FFmpegView.xaml" />
+	<None Include="..\..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.18" />
+    <ProjectReference Include="..\FFmpegView.Shared\FFmpegView.Shared.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	<Version>1.0.0</Version>
+	<Platforms>AnyCPU</Platforms>
+	<Authors>michael_eddy</Authors>
+	<LangVersion>latest</LangVersion>
+	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	<TargetFrameworks>netstandard2.0</TargetFrameworks>
+	<EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+	<PackageProjectUrl>https://github.com/dove-team/FFmpegView</PackageProjectUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.0.1" />
+	<ProjectReference Include="..\FFmpegView.Shared\FFmpegView.Shared.csproj" />
+  </ItemGroup>
+</Project>
