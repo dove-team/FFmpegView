@@ -22,7 +22,12 @@ namespace FFmpegView
             }
         }
         internal bool IsInitialize { get; private set; }
-        public unsafe void Initialize(string libffmpegDirectoryPath = null)
+        /// <summary>
+        /// init ffmpeg
+        /// </summary>
+        /// <param name="libffmpegDirectoryPath">ffmpeg libs folder path</param>
+        /// <param name="logLevel">value from ffmpeg.AV_LOG_***</param>
+        public unsafe void Initialize(string libffmpegDirectoryPath = null, int logLevel = ffmpeg.AV_LOG_VERBOSE)
         {
             try
             {
@@ -49,7 +54,7 @@ namespace FFmpegView
                     ffmpeg.RootPath = libffmpegDirectoryPath;
                     ffmpeg.avdevice_register_all();
                     ffmpeg.avformat_network_init();
-                    ffmpeg.av_log_set_level(ffmpeg.AV_LOG_VERBOSE);
+                    ffmpeg.av_log_set_level(logLevel);
                     av_log_set_callback_callback logCallback = (p0, level, format, vl) =>
                     {
                         if (level > ffmpeg.av_log_get_level()) return;

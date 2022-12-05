@@ -82,7 +82,15 @@ namespace FFmpegView
             video = new VideoStreamDecoder();
             timeout = TimeSpan.FromTicks(10000);
             video.MediaCompleted += VideoMediaCompleted;
+            video.MediaMsgRecevice += Video_MediaMsgRecevice;
             isInit = Init();
+        }
+        private void Video_MediaMsgRecevice(MsgType type, string msg)
+        {
+            if (type == MsgType.Error)
+                Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, msg);
+            else
+                Logger.TryGet(LogEventLevel.Information, LogArea.Control)?.Log(this, msg);
         }
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {

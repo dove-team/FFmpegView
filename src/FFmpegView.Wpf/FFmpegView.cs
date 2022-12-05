@@ -30,12 +30,20 @@ namespace FFmpegView.Wpf
             video = new VideoStreamDecoder();
             timeout = TimeSpan.FromTicks(10000);
             video.MediaCompleted += VideoMediaCompleted;
+            video.MediaMsgRecevice += Video_MediaMsgRecevice;
             isInit = Init();
         }
+        private void Video_MediaMsgRecevice(MsgType type, string msg) =>
+            Debug.WriteLine($"{(type == MsgType.Error ? "Error: " : "Info: ")}{msg}");
         public void SetAudioHandler(AudioStreamDecoder decoder) => audio = decoder;
         private void VideoMediaCompleted(TimeSpan duration)
         {
             Dispatcher.InvokeAsync(DisplayVideoInfo);
+        }
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
+        {
+            base.OnVisualParentChanged(oldParent);
+
         }
         private void DrawImage(AVFrame convertedFrame)
         {
