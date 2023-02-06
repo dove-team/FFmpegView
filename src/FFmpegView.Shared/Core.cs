@@ -11,24 +11,15 @@ namespace FFmpegView
 {
     public sealed class Core
     {
-        private Core() { }
-        private static Core instance;
-        public static Core Instance
-        {
-            get
-            {
-                instance ??= new();
-                return instance;
-            }
-        }
-        internal bool IsInitialize { get; private set; }
+        internal static bool IsInitialize { get; private set; }
         /// <summary>
         /// init ffmpeg
         /// </summary>
         /// <param name="libffmpegDirectoryPath">ffmpeg libs folder path</param>
         /// <param name="logLevel">value from ffmpeg.AV_LOG_***</param>
-        public unsafe void Initialize(string libffmpegDirectoryPath = null, int logLevel = ffmpeg.AV_LOG_VERBOSE)
+        public static unsafe void Initialize(string libffmpegDirectoryPath = null, int logLevel = ffmpeg.AV_LOG_VERBOSE)
         {
+            if (IsInitialize) return;
             try
             {
                 if (libffmpegDirectoryPath.IsEmpty())

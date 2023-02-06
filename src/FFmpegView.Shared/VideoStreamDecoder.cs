@@ -293,7 +293,7 @@ namespace FFmpegView
         {
             try
             {
-                if (!Core.Instance.IsInitialize)
+                if (!Core.IsInitialize)
                 {
                     SendMsg(MsgType.Information, "FFmpeg : dosnot initialize device");
                     return false;
