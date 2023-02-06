@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace FFmpegView.WpfDemo2
+namespace FFmpegView.WpfDemo
 {
     public partial class MainWindow : Window
     {
