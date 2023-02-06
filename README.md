@@ -2,10 +2,22 @@ This is a ffmpeg.autogen binding library, for wpf and avalonia.
 
 > # Avalonia
 in Avalonia,To enable extension should be present in your Program.cs file:
+
 ```csharp
 AppBuilder.Configure<App>()
         .UsePlatformDetect()
         .UseFFmpeg()
+        .LogToTrace();
+```
+AND Initialize USING 
+```csharp
+Core.Initialize(libffmpegDirectoryPath)
+```
+OR
+```csharp
+AppBuilder.Configure<App>()
+        .UsePlatformDetect()
+        .UseFFmpeg(libffmpegDirectoryPath)
         .LogToTrace();
 ```
 then use the `FFmpegView` in axaml or charp code, and you need handle audio stream [here](#audio). 
