@@ -10,6 +10,7 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using PCLUntils.Objects;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -68,6 +69,7 @@ namespace FFmpegView
             StretchProperty.Changed.AddClassHandler<FFmpegView>(OnStretchChange);
         }
         public void SetAudioHandler(AudioStreamDecoder decoder) => audio = decoder;
+        public void SetHeader(Dictionary<string, string> headers) => video.Headers = headers;
         private static void OnStretchChange(FFmpegView sender, AvaloniaPropertyChangedEventArgs e)
         {
             try
@@ -80,6 +82,7 @@ namespace FFmpegView
         public FFmpegView()
         {
             video = new VideoStreamDecoder();
+            video.Headers = new Dictionary<string, string> { { "User-Agent", "ffmpeg_demo" } };
             timeout = TimeSpan.FromTicks(10000);
             video.MediaCompleted += VideoMediaCompleted;
             video.MediaMsgRecevice += Video_MediaMsgRecevice;
@@ -114,7 +117,7 @@ namespace FFmpegView
             }
             return state;
         }
-        public bool Play(string uri)
+        public bool Play(string uri, Dictionary<string, string> headers = null)
         {
             if (!isInit)
             {
@@ -126,6 +129,7 @@ namespace FFmpegView
             {
                 if (video.State == MediaState.None)
                 {
+                    video.Headers = headers;
                     video.InitDecodecVideo(uri);
                     audio?.InitDecodecAudio(uri);
                     audio?.Prepare();

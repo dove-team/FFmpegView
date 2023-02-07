@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using FFmpegView.Bass;
+using System.Collections.Generic;
 
 namespace FFmpegView.AvaloniaDemo
 {
@@ -17,7 +18,9 @@ namespace FFmpegView.AvaloniaDemo
             Height = 600;
 
             var playerView = this.FindControl<FFmpegView>("playerView");
-            playerView.SetAudioHandler(new BassAudioStreamDecoder());
+            var audioStreamDecoder = new BassAudioStreamDecoder();
+            audioStreamDecoder.Headers = new Dictionary<string, string> { { "User-Agent", "ffmpeg_demo" } };
+            playerView.SetAudioHandler(audioStreamDecoder);
             playerView.Play("http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4");
         }
     }

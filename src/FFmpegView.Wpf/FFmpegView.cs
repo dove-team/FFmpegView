@@ -1,5 +1,6 @@
 ﻿using FFmpeg.AutoGen;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,7 +89,7 @@ namespace FFmpegView.Wpf
             }
             return state;
         }
-        public bool Play(string uri)
+        public bool Play(string uri, Dictionary<string, string> headers = null)
         {
             if (!isInit)
             {
@@ -100,6 +101,7 @@ namespace FFmpegView.Wpf
             {
                 if (video.State == MediaState.None)
                 {
+                    video.Headers = headers;
                     video.InitDecodecVideo(uri);
                     audio?.InitDecodecAudio(uri);
                     DisplayVideoInfo();
@@ -115,6 +117,7 @@ namespace FFmpegView.Wpf
             }
             return state;
         }
+        public void SetHeader(Dictionary<string, string> headers) => video.Headers = headers;
         public bool SeekTo(int seekTime)
         {
             try
