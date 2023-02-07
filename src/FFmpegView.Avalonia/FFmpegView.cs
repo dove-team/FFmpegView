@@ -69,6 +69,7 @@ namespace FFmpegView
             StretchProperty.Changed.AddClassHandler<FFmpegView>(OnStretchChange);
         }
         public void SetAudioHandler(AudioStreamDecoder decoder) => audio = decoder;
+        public void SetHeader(Dictionary<string, string> headers) => video.Headers = headers;
         private static void OnStretchChange(FFmpegView sender, AvaloniaPropertyChangedEventArgs e)
         {
             try
@@ -116,7 +117,7 @@ namespace FFmpegView
             }
             return state;
         }
-        public bool Play(string uri)
+        public bool Play(string uri, Dictionary<string, string> headers = null)
         {
             if (!isInit)
             {
@@ -128,6 +129,7 @@ namespace FFmpegView
             {
                 if (video.State == MediaState.None)
                 {
+                    video.Headers = headers;
                     video.InitDecodecVideo(uri);
                     audio?.InitDecodecAudio(uri);
                     audio?.Prepare();

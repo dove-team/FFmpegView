@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace FFmpegView.Wpf
 {
@@ -29,6 +30,7 @@ namespace FFmpegView.Wpf
         }
         private void Video_MediaMsgRecevice(MsgType type, string msg) =>
             Debug.WriteLine($"{(type == MsgType.Error ? "Error: " : "Info: ")}{msg}");
+        public void SetHeader(Dictionary<string, string> headers) => video.Headers = headers;
         public void SetAudioHandler(AudioStreamDecoder decoder) => audio = decoder;
         private void VideoMediaCompleted(TimeSpan duration)
         {
@@ -61,7 +63,7 @@ namespace FFmpegView.Wpf
             }
             return state;
         }
-        public bool Play(string uri)
+        public bool Play(string uri, Dictionary<string, string> headers = null)
         {
             if (!isInit)
             {
@@ -73,6 +75,7 @@ namespace FFmpegView.Wpf
             {
                 if (video.State == MediaState.None)
                 {
+                    video.Headers = headers;
                     video.InitDecodecVideo(uri);
                     audio?.InitDecodecAudio(uri);
                     DisplayVideoInfo();

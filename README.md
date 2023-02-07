@@ -9,17 +9,6 @@ AppBuilder.Configure<App>()
         .UseFFmpeg()
         .LogToTrace();
 ```
-AND Initialize USING 
-```csharp
-Core.Initialize(libffmpegDirectoryPath)
-```
-OR
-```csharp
-AppBuilder.Configure<App>()
-        .UsePlatformDetect()
-        .UseFFmpeg(libffmpegDirectoryPath)
-        .LogToTrace();
-```
 then use the `FFmpegView` in axaml or charp code, and you need handle audio stream [here](#audio). 
 
 > # WPF
@@ -39,6 +28,13 @@ then use the `FFmpegView` in xaml,and you should set audio handle after `Initial
         InitializeComponent();
         playerView.SetAudioHandler(new NAudioStreamDecoder());
     }
+```
+
+> # HTTP HEADER
+for http protocol header setting,just coding like 
+```csharp
+    playerView.Play(url,headers);
+    playerView.SetHeader(headers);
 ```
 
 > # Audio
