@@ -3,8 +3,10 @@ using PCLUntils;
 using PCLUntils.Objects;
 using PCLUntils.Plantform;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace FFmpegView
@@ -12,6 +14,8 @@ namespace FFmpegView
     public sealed class Core
     {
         internal static bool IsInitialize { get; private set; }
+        private static AVHWDeviceType current;
+        public static AVHWDeviceType Current => current;
         /// <summary>
         /// init ffmpeg
         /// </summary>
@@ -70,6 +74,30 @@ namespace FFmpegView
                 IsInitialize = false;
                 Debug.WriteLine(ex.Message);
             }
+        }
+        public static AVHWDeviceType GetHWDecoder(int inputDecoderNumber = 0)
+        {
+            var type = AVHWDeviceType.AV_HWDEVICE_TYPE_NONE;
+            var availableHWDecoders = new Dictionary<int, AVHWDeviceType>();
+            var number = 0;
+            while ((type = ffmpeg.av_hwdevice_iterate_types(type)) != AVHWDeviceType.AV_HWDEVICE_TYPE_NONE)
+            {
+                availableHWDecoders.Add(number, type);
+                number++;
+            }
+            if (availableHWDecoders.Count == 0)
+            {
+                Console.WriteLine("Your system have no hardware decoders.");
+                current = AVHWDeviceType.AV_HWDEVICE_TYPE_NONE;
+            }
+            else
+            {
+                var decoderNumber = availableHWDecoders.SingleOrDefault(t => t.Value == AVHWDeviceType.AV_HWDEVICE_TYPE_DXVA2).Key;
+                if (decoderNumber == 0)
+                    decoderNumber = availableHWDecoders.FirstOrDefault().Key;
+                availableHWDecoders.TryGetValue(inputDecoderNumber == 0 ? decoderNumber : inputDecoderNumber, out current);
+            }
+            return current;
         }
     }
 }

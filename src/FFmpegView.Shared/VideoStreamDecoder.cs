@@ -1,5 +1,6 @@
 ﻿using FFmpeg.AutoGen;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static FFmpegView.IMedia;
@@ -27,6 +28,7 @@ namespace FFmpegView
         public event MediaHandler MediaPause;
         public event MediaHandler MediaCompleted;
         public event MediaMsgHandler MediaMsgRecevice;
+        public Dictionary<string, string> Headers { get; set; }
         #region
         public TimeSpan Duration { get; private set; }
         public string CodecName { get; private set; }
@@ -40,6 +42,10 @@ namespace FFmpegView
         public TimeSpan Position => clock.Elapsed + OffsetClock;
         public TimeSpan frameDuration { get; private set; }
         #endregion
+        public VideoStreamDecoder()
+        {
+            Headers = new Dictionary<string, string>();
+        }
         public void InitDecodecVideo(string uri)
         {
             try
@@ -52,7 +58,8 @@ namespace FFmpegView
                     return;
                 }
                 var tempFormat = format;
-                error = ffmpeg.avformat_open_input(&tempFormat, uri, null, null);
+                AVDictionary* options = Headers.ToHeader();
+                error = ffmpeg.avformat_open_input(&tempFormat, uri, null, &options);
                 if (error < 0)
                 {
                     SendMsg(MsgType.Information, "Failed to open video");

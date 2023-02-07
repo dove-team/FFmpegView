@@ -1,5 +1,6 @@
 ﻿using FFmpeg.AutoGen;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static FFmpegView.IMedia;
@@ -34,8 +35,13 @@ namespace FFmpegView
         public int SampleRate { get; protected set; }
         public long BitsPerSample { get; protected set; }
         public bool IsPlaying { get; protected set; }
+        public Dictionary<string, string> Headers { get; set; }
         public event MediaHandler MediaCompleted;
         public event MediaMsgHandler MediaMsgRecevice;
+        public AudioStreamDecoder()
+        {
+            Headers = new Dictionary<string, string>();
+        }
         public bool InitDecodecAudio(string path)
         {
             try
@@ -43,7 +49,8 @@ namespace FFmpegView
                 int error = 0;
                 format = ffmpeg.avformat_alloc_context();
                 var tempFormat = format;
-                error = ffmpeg.avformat_open_input(&tempFormat, path, null, null);
+                AVDictionary* options = Headers.ToHeader();
+                error = ffmpeg.avformat_open_input(&tempFormat, path, null, &options);
                 if (error < 0)
                 {
                     SendMsg(MsgType.Information, "Failed to open media file");

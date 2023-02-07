@@ -1,4 +1,5 @@
 ﻿using FFmpegView.NAudio;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -9,7 +10,9 @@ namespace FFmpegView.WpfDemo
         public MainWindow()
         {
             InitializeComponent();
-            playerView.SetAudioHandler(new NAudioStreamDecoder());
+            var audioStreamDecoder= new NAudioStreamDecoder();
+            audioStreamDecoder.Headers = new Dictionary<string, string> { { "User-Agent", "ffmpeg_demo" } };
+            playerView.SetAudioHandler(audioStreamDecoder);
             playerVView.SetAudioHandler(new NAudioStreamDecoder());
         }
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

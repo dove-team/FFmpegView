@@ -8,17 +8,9 @@ namespace FFmpegView
 {
     public static class AppBuilderDesktopExtensions
     {
-        public static unsafe TAppBuilder UseFFmpeg<TAppBuilder>(this TAppBuilder builder)
+        public static unsafe TAppBuilder UseFFmpeg<TAppBuilder>(this TAppBuilder builder, string libffmpegDirectoryPath = null)
            where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
         {
-            builder.AfterSetup((_) => { InitXamlStyle(builder); });
-            return builder;
-        }
-        public static unsafe TAppBuilder UseFFmpeg<TAppBuilder>(this TAppBuilder builder, string libffmpegDirectoryPath)
-           where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
-        {
-            if (string.IsNullOrEmpty(libffmpegDirectoryPath))
-                throw new ArgumentNullException(nameof(libffmpegDirectoryPath));
             builder.AfterSetup((_) =>
             {
                 InitXamlStyle(builder);

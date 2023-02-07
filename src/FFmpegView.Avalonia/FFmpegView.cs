@@ -10,6 +10,7 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using PCLUntils.Objects;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -80,6 +81,7 @@ namespace FFmpegView
         public FFmpegView()
         {
             video = new VideoStreamDecoder();
+            video.Headers = new Dictionary<string, string> { { "User-Agent", "ffmpeg_demo" } };
             timeout = TimeSpan.FromTicks(10000);
             video.MediaCompleted += VideoMediaCompleted;
             video.MediaMsgRecevice += Video_MediaMsgRecevice;
