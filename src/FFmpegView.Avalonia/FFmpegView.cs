@@ -11,6 +11,10 @@ using Avalonia.Threading;
 using PCLUntils.Objects;
 using System;
 using System.Collections.Generic;
+#if NET40_OR_GREATER
+using System.Runtime.ExceptionServices;
+using System.Security;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -218,34 +222,7 @@ namespace FFmpegView
             try
             {
                 cancellationToken = new CancellationTokenSource();
-                playTask = new Task(() =>
-                {
-                    while (_isRunning)
-                    {
-                        try
-                        {
-                            if (video.IsPlaying && _isAttached)
-                            {
-                                if (video.TryReadNextFrame(out var frame))
-                                {
-                                    var convertedFrame = video.FrameConvert(&frame);
-                                    bitmap?.Dispose();
-                                    bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Premul, (IntPtr)convertedFrame.data[0], new PixelSize(video.FrameWidth, video.FrameHeight), new Vector(96, 96), convertedFrame.linesize[0]);
-                                    Dispatcher.UIThread.InvokeAsync(() =>
-                                    {
-                                        if (image.IsNotEmpty())
-                                            image.Source = bitmap;
-                                    });
-                                }
-                            }
-                            Thread.Sleep(10);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, ex.Message);
-                        }
-                    }
-                }, cancellationToken.Token);
+                playTask = new Task(DrawImage, cancellationToken.Token);
                 playTask.Start();
                 audioTask = new Task(() =>
                 {
@@ -276,7 +253,39 @@ namespace FFmpegView
                 return false;
             }
         }
-        #region 视频信息
+#if NET40_OR_GREATER
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+#endif
+        private void DrawImage()
+        {
+            while (_isRunning)
+            {
+                try
+                {
+                    if (video.IsPlaying && _isAttached)
+                    {
+                        if (video.TryReadNextFrame(out var frame))
+                        {
+                            var convertedFrame = video.FrameConvert(&frame);
+                            bitmap?.Dispose();
+                            bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Premul, (IntPtr)convertedFrame.data[0], new PixelSize(video.FrameWidth, video.FrameHeight), new Vector(96, 96), convertedFrame.linesize[0]);
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                if (image.IsNotEmpty())
+                                    image.Source = bitmap;
+                            });
+                        }
+                    }
+                    Thread.Sleep(10);
+                }
+                catch (Exception ex)
+                {
+                    Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, ex.Message);
+                }
+            }
+        }
+#region 视频信息
         private string codec;
         public string Codec => codec;
         private TimeSpan duration;
@@ -314,6 +323,6 @@ namespace FFmpegView
             }
             catch { }
         }
-        #endregion
+#endregion
     }
 }
