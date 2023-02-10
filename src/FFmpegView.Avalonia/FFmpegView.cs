@@ -24,10 +24,11 @@ namespace FFmpegView
         private Task playTask;
         private Task audioTask;
         private Bitmap bitmap;
-        private bool _isAttached = false;
-        private readonly bool isInit = false;
         private AudioStreamDecoder audio;
         private readonly TimeSpan timeout;
+        private bool _isRunning = true;
+        private bool _isAttached = false;
+        private readonly bool isInit = false;
         private readonly VideoStreamDecoder video;
         private CancellationTokenSource cancellationToken;
         public static readonly StyledProperty<Stretch> StretchProperty =
@@ -117,6 +118,33 @@ namespace FFmpegView
             }
             return state;
         }
+        public bool Play(MediaItem media)
+        {
+            if (!isInit)
+            {
+                Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, "FFmpeg : dosnot initialize device");
+                return false;
+            }
+            bool state = false;
+            try
+            {
+                if (video.State == MediaState.None)
+                {
+                    video.Headers = media.Headers;
+                    video.InitDecodecVideo(media.VideoUrl);
+                    audio?.InitDecodecAudio(media.AudioUrl);
+                    audio?.Prepare();
+                    DisplayVideoInfo();
+                }
+                state = video.Play();
+                audio?.Play();
+            }
+            catch (Exception ex)
+            {
+                Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, ex.Message);
+            }
+            return state;
+        }
         public bool Play(string uri, Dictionary<string, string> headers = null)
         {
             if (!isInit)
@@ -184,6 +212,7 @@ namespace FFmpegView
                 return false;
             }
         }
+        public void Dispo() => _isRunning = false;
         bool Init()
         {
             try
@@ -191,7 +220,7 @@ namespace FFmpegView
                 cancellationToken = new CancellationTokenSource();
                 playTask = new Task(() =>
                 {
-                    while (true)
+                    while (_isRunning)
                     {
                         try
                         {
@@ -220,7 +249,7 @@ namespace FFmpegView
                 playTask.Start();
                 audioTask = new Task(() =>
                 {
-                    while (true)
+                    while (_isRunning)
                     {
                         try
                         {

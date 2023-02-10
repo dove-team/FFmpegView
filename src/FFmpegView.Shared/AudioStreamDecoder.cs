@@ -9,6 +9,7 @@ namespace FFmpegView
 {
     public unsafe abstract class AudioStreamDecoder : IMedia
     {
+        int error;
         byte* bufferPtr;
         IntPtr audioBuffer;
         AVFormatContext* format;
@@ -46,7 +47,6 @@ namespace FFmpegView
         {
             try
             {
-                int error = 0;
                 format = ffmpeg.avformat_alloc_context();
                 var tempFormat = format;
                 AVDictionary* options = Headers.ToHeader();
@@ -133,7 +133,7 @@ namespace FFmpegView
                         return false;
                     }
                 }
-                if (isNextFrame)
+                if (isNextFrame && error >= 0)
                 {
                     lock (syncLock)
                     {
@@ -141,7 +141,6 @@ namespace FFmpegView
                         ffmpeg.av_frame_unref(frame);
                         while (true)
                         {
-                            ffmpeg.av_packet_unref(packet);
                             result = ffmpeg.av_read_frame(format, packet);
                             if (result == ffmpeg.AVERROR_EOF || result < 0)
                             {
@@ -156,6 +155,7 @@ namespace FFmpegView
                             if (result < 0) continue;
                             frameDuration = TimeSpan.FromTicks((long)Math.Round(TimeSpan.TicksPerMillisecond * 1000d * frame->nb_samples / frame->sample_rate, 0));
                             outFrame = *frame;
+                            ffmpeg.av_packet_unref(packet);
                             return true;
                         }
                     }
@@ -199,6 +199,7 @@ namespace FFmpegView
                     Marshal.FreeHGlobal(audioBuffer);
                     bufferPtr = null;
                     audioStream = null;
+                    error = -1;
                     audioStreamIndex = -1;
                     Duration = TimeSpan.FromMilliseconds(0);
                     CodecName = string.Empty;
@@ -223,7 +224,7 @@ namespace FFmpegView
         {
             try
             {
-                if (format == null || audioStreamIndex == -1)
+                if (format == null || error >= 0)
                     return false;
                 lock (syncLock)
                 {

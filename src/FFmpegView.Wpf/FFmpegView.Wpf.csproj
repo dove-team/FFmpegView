@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	  <UseWpf>true</UseWpf>
-	  <Version>1.0.2</Version>
+	  <Version>1.0.3</Version>
 	  <Platforms>AnyCPU</Platforms>
 	  <Authors>michael_eddy</Authors>
 	  <LangVersion>latest</LangVersion>

@@ -53,3 +53,10 @@ NAudio:
 ```csharp
         playerView.SetAudioHandler(new NAudioStreamDecoder());
 ```
+
+> # MEDIA
+you can use the `MediaItem` class the define the resources info,coding like
+```csharp
+    var mediaItem = new MediaItem(url);
+    playerView.Play(mediaItem);
+```

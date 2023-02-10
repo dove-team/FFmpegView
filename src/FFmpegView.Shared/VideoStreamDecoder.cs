@@ -9,6 +9,7 @@ namespace FFmpegView
 {
     public sealed unsafe class VideoStreamDecoder : IMedia
     {
+        int error;
         AVFormatContext* format;
         AVCodecContext* codecContext;
         AVPacket* packet;
@@ -50,7 +51,6 @@ namespace FFmpegView
         {
             try
             {
-                int error = 0;
                 format = ffmpeg.avformat_alloc_context();
                 if (format == null)
                 {
@@ -168,7 +168,7 @@ namespace FFmpegView
                         return false;
                     }
                 }
-                if (isNextFrame)
+                if (isNextFrame && error >= 0)
                 {
                     lock (SyncLock)
                     {
@@ -230,6 +230,7 @@ namespace FFmpegView
                     var tempConvert = convert;
                     ffmpeg.sws_freeContext(convert);
                     videoStream = null;
+                    error = -1;
                     videoStreamIndex = -1;
                     Duration = TimeSpan.FromMilliseconds(0);
                     CodecName = string.Empty;
@@ -253,7 +254,7 @@ namespace FFmpegView
         {
             try
             {
-                if (format == null || videoStream == null)
+                if (format == null || videoStream == null || error < 0)
                     return false;
                 lock (SyncLock)
                 {
