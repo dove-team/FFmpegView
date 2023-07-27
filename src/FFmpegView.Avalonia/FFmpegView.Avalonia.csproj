@@ -14,7 +14,7 @@
 	<None Include="..\..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.18" />
+    <PackageReference Include="Avalonia" Version="11.0.1" />
     <ProjectReference Include="..\FFmpegView.Shared\FFmpegView.Shared.csproj" />
   </ItemGroup>
 </Project>

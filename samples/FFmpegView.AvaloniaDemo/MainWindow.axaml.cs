@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FFmpegView.AvaloniaDemo
 {
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
         public MainWindow()
         {
@@ -17,7 +17,6 @@ namespace FFmpegView.AvaloniaDemo
             Width = 800;
             Height = 600;
 
-            var playerView = this.FindControl<FFmpegView>("playerView");
             var audioStreamDecoder = new BassAudioStreamDecoder();
             audioStreamDecoder.Headers = new Dictionary<string, string> { { "User-Agent", "ffmpeg_demo" } };
             playerView.SetAudioHandler(audioStreamDecoder);

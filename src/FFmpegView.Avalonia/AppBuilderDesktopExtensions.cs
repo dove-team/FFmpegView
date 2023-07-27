@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Logging;
 using Avalonia.Markup.Xaml.Styling;
 using System;
@@ -8,8 +7,7 @@ namespace FFmpegView
 {
     public static class AppBuilderDesktopExtensions
     {
-        public static unsafe TAppBuilder UseFFmpeg<TAppBuilder>(this TAppBuilder builder, string libffmpegDirectoryPath = null)
-           where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
+        public static unsafe AppBuilder UseFFmpeg(this AppBuilder builder, string libffmpegDirectoryPath = null)
         {
             builder.AfterSetup((_) =>
             {
