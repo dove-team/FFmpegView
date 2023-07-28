@@ -14,11 +14,6 @@
 	  <None Include="..\..\.editorconfig" Link=".editorconfig" />
       <ProjectReference Include="..\FFmpegView.Shared\FFmpegView.Shared.csproj" />
   </ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-		<PackageReference Include="FFmpeg.AutoGen">
-			<Version>5.1.1</Version>
-		</PackageReference>
-	</ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <PackageReference Include="System.Drawing.Common">
       <Version>5.0.3</Version>

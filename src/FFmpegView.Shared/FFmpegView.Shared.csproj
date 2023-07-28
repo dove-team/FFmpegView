@@ -10,6 +10,6 @@
   <ItemGroup>
 	<None Include="..\..\.editorconfig" Link=".editorconfig" />
     <PackageReference Include="PCLUntils" Version="1.0.8" />
-    <PackageReference Include="FFmpeg.AutoGen" Version="5.1.1" />
+    <PackageReference Include="FFmpeg.AutoGen" Version="6.0.0.2" />
   </ItemGroup>
 </Project>
