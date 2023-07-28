@@ -3,10 +3,10 @@
   <metadata>
     <id>Dove.FFmpeg.Linux</id>
     <title>Dove.FFmpeg.Linux</title>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <authors>michael_eddy</authors>
     <owners>michael_eddy</owners>
-    <license type="expression">MIT</license>
+    <license type="expression">GPL-2.0-or-later</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>FFmpeg libraries for Linux</description>
     <tags>FFmpeg, Video, Avalonia</tags>
