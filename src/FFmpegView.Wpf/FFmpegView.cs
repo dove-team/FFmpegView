@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
+using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,8 +46,11 @@ namespace FFmpegView.Wpf
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
-
         }
+#if NET40_OR_GREATER
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+#endif
         private void DrawImage(AVFrame convertedFrame)
         {
             try

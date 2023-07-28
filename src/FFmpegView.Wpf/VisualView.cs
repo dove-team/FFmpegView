@@ -4,6 +4,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using FFmpeg.AutoGen;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
+using System.Security;
 
 namespace FFmpegView.Wpf
 {
@@ -26,6 +28,10 @@ namespace FFmpegView.Wpf
         }
         protected override Visual GetVisualChild(int index) => visual;
         protected override int VisualChildrenCount => 1;
+#if NET40_OR_GREATER
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+#endif
         public void Draw(AVFrame convertedFrame)
         {
             try

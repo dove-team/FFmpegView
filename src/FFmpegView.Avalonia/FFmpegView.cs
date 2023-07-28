@@ -11,6 +11,10 @@ using Avalonia.Threading;
 using PCLUntils.Objects;
 using System;
 using System.Collections.Generic;
+#if NET40_OR_GREATER
+using System.Runtime.ExceptionServices;
+using System.Security;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,10 +28,11 @@ namespace FFmpegView
         private Task playTask;
         private Task audioTask;
         private Bitmap bitmap;
-        private bool _isAttached = false;
-        private readonly bool isInit = false;
         private AudioStreamDecoder audio;
         private readonly TimeSpan timeout;
+        private bool _isRunning = true;
+        private bool _isAttached = false;
+        private readonly bool isInit = false;
         private readonly VideoStreamDecoder video;
         private CancellationTokenSource cancellationToken;
         public static readonly StyledProperty<Stretch> StretchProperty =
@@ -117,6 +122,33 @@ namespace FFmpegView
             }
             return state;
         }
+        public bool Play(MediaItem media)
+        {
+            if (!isInit)
+            {
+                Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, "FFmpeg : dosnot initialize device");
+                return false;
+            }
+            bool state = false;
+            try
+            {
+                if (video.State == MediaState.None)
+                {
+                    video.Headers = media.Headers;
+                    video.InitDecodecVideo(media.VideoUrl);
+                    audio?.InitDecodecAudio(media.AudioUrl);
+                    audio?.Prepare();
+                    DisplayVideoInfo();
+                }
+                state = video.Play();
+                audio?.Play();
+            }
+            catch (Exception ex)
+            {
+                Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, ex.Message);
+            }
+            return state;
+        }
         public bool Play(string uri, Dictionary<string, string> headers = null)
         {
             if (!isInit)
@@ -184,43 +216,17 @@ namespace FFmpegView
                 return false;
             }
         }
+        public void Dispo() => _isRunning = false;
         bool Init()
         {
             try
             {
                 cancellationToken = new CancellationTokenSource();
-                playTask = new Task(() =>
-                {
-                    while (true)
-                    {
-                        try
-                        {
-                            if (video.IsPlaying && _isAttached)
-                            {
-                                if (video.TryReadNextFrame(out var frame))
-                                {
-                                    var convertedFrame = video.FrameConvert(&frame);
-                                    bitmap?.Dispose();
-                                    bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Premul, (IntPtr)convertedFrame.data[0], new PixelSize(video.FrameWidth, video.FrameHeight), new Vector(96, 96), convertedFrame.linesize[0]);
-                                    Dispatcher.UIThread.InvokeAsync(() =>
-                                    {
-                                        if (image.IsNotEmpty())
-                                            image.Source = bitmap;
-                                    });
-                                }
-                            }
-                            Thread.Sleep(10);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, ex.Message);
-                        }
-                    }
-                }, cancellationToken.Token);
+                playTask = new Task(DrawImage, cancellationToken.Token);
                 playTask.Start();
                 audioTask = new Task(() =>
                 {
-                    while (true)
+                    while (_isRunning)
                     {
                         try
                         {
@@ -247,7 +253,39 @@ namespace FFmpegView
                 return false;
             }
         }
-        #region 视频信息
+#if NET40_OR_GREATER
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+#endif
+        private void DrawImage()
+        {
+            while (_isRunning)
+            {
+                try
+                {
+                    if (video.IsPlaying && _isAttached)
+                    {
+                        if (video.TryReadNextFrame(out var frame))
+                        {
+                            var convertedFrame = video.FrameConvert(&frame);
+                            bitmap?.Dispose();
+                            bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Premul, (IntPtr)convertedFrame.data[0], new PixelSize(video.FrameWidth, video.FrameHeight), new Vector(96, 96), convertedFrame.linesize[0]);
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                if (image.IsNotEmpty())
+                                    image.Source = bitmap;
+                            });
+                        }
+                    }
+                    Thread.Sleep(10);
+                }
+                catch (Exception ex)
+                {
+                    Logger.TryGet(LogEventLevel.Error, LogArea.Control)?.Log(this, ex.Message);
+                }
+            }
+        }
+#region 视频信息
         private string codec;
         public string Codec => codec;
         private TimeSpan duration;
@@ -285,6 +323,6 @@ namespace FFmpegView
             }
             catch { }
         }
-        #endregion
+#endregion
     }
 }
