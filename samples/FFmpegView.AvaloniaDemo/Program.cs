@@ -8,8 +8,8 @@ namespace FFmpegView.AvaloniaDemo
         {
             AppBuilder.Configure<App>()
                     .LogToTrace()
-                    .UsePlatformDetect()
                     .UseFFmpeg()
+                    .UsePlatformDetect()
             .StartWithClassicDesktopLifetime(args);
         }
     }

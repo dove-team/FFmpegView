@@ -7,7 +7,7 @@ namespace FFmpegView
 {
     public static class AppBuilderDesktopExtensions
     {
-        public static unsafe AppBuilder UseFFmpeg(this AppBuilder builder, string libffmpegDirectoryPath = null)
+        public static AppBuilder UseFFmpeg(this AppBuilder builder, string libffmpegDirectoryPath = null)
         {
             builder.AfterSetup((_) =>
             {
