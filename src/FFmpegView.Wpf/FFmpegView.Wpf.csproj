@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
 	  <None Include="..\..\.editorconfig" Link=".editorconfig" />
+	  <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
       <ProjectReference Include="..\FFmpegView.Shared\FFmpegView.Shared.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
